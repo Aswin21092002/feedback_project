@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            display: flex;
+            justify-content: center; /* Center the logo horizontally */
+            align-items: center; /* Center the logo vertically, if needed */
+            padding: 20px; /* Add some padding around the header */
+            background-color: #fff; /* White background for the header */
+            color: #333; /* Dark text color for the header */
+            position: relative; /* Ensure header is properly positioned */
+            top: 0;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center; /* Center the logo image horizontally */
+            align-items: center; /* Center the logo image vertically, if needed */
+        }
+        
+        .logo-image {
+            max-width: 100%; /* Ensure the logo fits within its container */
+            height: auto; /* Maintain aspect ratio */
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto; /* Center the form horizontally and add vertical margin */
+            padding: 20px;
+            background-color: #fff; /* White background for the form */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #004080; /* Dark blue color for headings */
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #004080; /* Dark blue color for labels */
+        }
+        
+        input, select, textarea {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            color: #333; /* Black text color for inputs */
+        }
+        
+        button {
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        button#record-toggle {
+            background-color: #004080; /* Dark blue color for record-toggle button */
+            width: 120px;
+        }
+        
+        button#record-toggle:hover {
+            background-color: #003366; /* Darker blue on hover */
+        }
+        
+        button#delete-audio {
+            background-color: #dc3545;
+            color: #fff;
+            display: none;
+            margin-top: 10px;
+        }
+        
+        button#delete-audio:hover {
+            background-color: #c82333;
+        }
+        
+        button#submit {
+            background-color: #004080; /* Dark blue color for submit button */
+            color: #fff;
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+        
+        button#submit:hover {
+            background-color: #003366; /* Darker blue on hover */
+        }
+        
+        #audio-playback {
+            display: none;
+            margin: 10px 0;
+        }
+        
+        .form-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .form-buttons button {
+            margin: 0;
+        }
+        
+        .date-fields {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px; /* Increased gap to 40px */
+        }
+        
+        .date-fields > div {
+            flex: 1;
+        }
+        
+        .date-fields label {
+            margin: 0;
+        }
+        
+        .date-fields input {
+            width: 100%;
+        }
+        
+        /* General styling for form elements */
+        input, select {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box; /* Ensure padding and border are included in element's width */
+            color: #333; /* Black text color for inputs */
+        }
+        
+        /* Container for phone input and country code select */
+        .phone-container {
+            display: flex;
+            align-items: center; /* Center items vertically */
+            gap: 10px; /* Space between select and input */
+        }
+        
+        /* Styling for country code select */
+        .phone-container .dial-code-select {
+            flex: 1; /* Allow select to grow with the container */
+            max-width: 100px; /* Limit maximum width of select */
+            font-size: 14px; /* Adjust font size if needed */
+        }
+        
+        /* Styling for phone input */
+        .phone-container input {
+            flex: 2; /* Allow input to take more space than select */
+            width: 100%; /* Ensure it fills available space */
+            font-size: 14px; /* Adjust font size to match select */
+        }
+        
+        label {
+            display: block; /* Make labels block elements */
+            font-weight: bold; /* Bold text for labels */
+            margin-bottom: 8px; /* Space below the labels */
+            color: #004080; /* Dark blue color for all labels */
+        }
+        
+        /* Specific styles for fieldset legend */
+        .rating-section legend {
+            font-weight: bold; /* Bold text for legends */
+            margin-bottom: 10px; /* Space below the legend */
+            color: #004080; /* Dark blue color for legends */
+        }
+        
+        /* Style adjustments for the fieldset elements */
+        .rating-section {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 20px; /* Space between sections */
+            background-color: #fff; /* White background for fieldset */
+        }
+        
+        /* Container for radio buttons */
+        .radio-group {
+            display: flex;
+            gap: 15px; /* Space between radio buttons */
+            flex-wrap: wrap; /* Allow wrapping if necessary */
+        }
+        
+        /* Individual radio button containers */
+        .radio-inline {
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Space between radio input and label */
+        }
+        
+        /* Ensure radio buttons and labels are aligned */
+        .radio-inline input[type="radio"] {
+            margin: 0; /* Remove default margin */
+        }
+        
+        /* Style the labels within radio buttons */
+        .radio-inline label {
+            font-weight: normal; /* Adjust font weight for labels */
+            margin: 0; /* Remove default margin */
+            color: #004080; /* Dark blue color for radio button labels */
+        }
+
+        button#play-voice {
+    background-color: #004080; /* Dark blue color */
+    color: #fff; /* White text color */
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+button#play-voice:hover {
+    background-color: #003366; /* Darker blue on hover */
+}
+
+#description {
+    text-align: center; /* Center text horizontally */
+    margin: 20px 0; /* Add vertical margin */
+    font-size: 16px; /* Adjust font size if needed */
+    color: #333; /* Adjust text color if needed */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically, if needed */
+    height: 100%; /* Ensure it takes full height of its container */
+    text-align: center; /* Ensure text is centered */
+}
+
+.form-buttons {
+    margin-top: 1cm; /* Move the button down by 1 cm */
+}
+
+button#submit {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 14px;
+    background-color: #004080; /* Dark blue color */
+}
+
+button#submit:hover {
+    background-color: #003366; /* Darker blue for hover effect */
+}
+
+    </style>
+    
+</head>
+<body>
+
+<header>
+    <div class="logo-container">
+        <img src="//srikrishnasweets.com/cdn/shop/files/SKS_SriKrishnaSweets_Sri_Krishna_Sweets_mysurpa_Muralis_logo_1280x356_-_SKS.png?v=1711347041&amp;width=500" 
+             srcset="//srikrishnasweets.com/cdn/shop/files/SKS_SriKrishnaSweets_Sri_Krishna_Sweets_mysurpa_Muralis_logo_1280x356_-_SKS.png?v=1711347041&amp;width=150 150w, 
+                     //srikrishnasweets.com/cdn/shop/files/SKS_SriKrishnaSweets_Sri_Krishna_Sweets_mysurpa_Muralis_logo_1280x356_-_SKS.png?v=1711347041&amp;width=225 225w, 
+                     //srikrishnasweets.com/cdn/shop/files/SKS_SriKrishnaSweets_Sri_Krishna_Sweets_mysurpa_Muralis_logo_1280x356_-_SKS.png?v=1711347041&amp;width=300 300w" 
+             width="150" height="41.71875" loading="eager" sizes="(max-width: 300px) 50vw, 150px" 
+             class="logo-image" fetchpriority="high" alt="Sri Krishna Sweets Logo">
+    </div>
+</header>
+
+    
+</head>
+<body>
+
+<div class="container">
+    <button id="play-voice">Hear Description</button>
+    <p id="description">
+        Welcome to Sree Krishna Sweets. Please fill out the form below to submit your complaint.
+        We value your feedback and will address your concerns promptly.
+    </p>
+
+    
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Name -->
+        <label for="id_name">Name</label>
+         <input class="form-control" aria-required="false" name="Name" id="form_input_11" type="text" aria-placeholder="" placeholder="Your Name" required>
+        
+        <!-- Phone -->
+       
+   <label for="id_phone">Phone</label>
+    <div class="phone-container">
+        <select aria-label="Select Country" class="form-control dial-code-select" name="dial_code">
+                         <option data-country-code="IN" value="+91">India +91</option>
+                         <option data-country-code="AF" value="+93">Afghanistan +93</option>
+                        <option data-country-code="AL" value="+355">Albania +355</option>
+                        <option data-country-code="DZ" value="+213">Algeria +213</option>
+                        <option data-country-code="AS" value="+1-684">American Samoa +1-684</option>
+                        <option data-country-code="AD" value="+376">Andorra +376</option>
+                        <option data-country-code="AO" value="+244">Angola +244</option>
+                        <option data-country-code="AI" value="+1-264">Anguilla +1-264</option>
+                        <option data-country-code="AG" value="+1-268">Antigua and Barbuda +1-268</option>
+                        <option data-country-code="AR" value="+54">Argentina +54</option>
+                        <option data-country-code="AM" value="+374">Armenia +374</option>
+                        <option data-country-code="AW" value="+297">Aruba +297</option>
+                        <option data-country-code="AU" value="+61">Australia +61</option>
+                        <option data-country-code="AT" value="+43">Austria +43</option>
+                        <option data-country-code="AZ" value="+994">Azerbaijan +994</option>
+                        <option data-country-code="BS" value="+1-242">Bahamas +1-242</option>
+                        <option data-country-code="BH" value="+973">Bahrain +973</option>
+                        <option data-country-code="BD" value="+880">Bangladesh +880</option>
+                        <option data-country-code="BB" value="+1-246">Barbados +1-246</option>
+                        <option data-country-code="BY" value="+375">Belarus +375</option>
+                        <option data-country-code="BE" value="+32">Belgium +32</option>
+                        <option data-country-code="BZ" value="+501">Belize +501</option>
+                        <option data-country-code="BJ" value="+229">Benin +229</option>
+                        <option data-country-code="BM" value="+1-441">Bermuda +1-441</option>
+                        <option data-country-code="BT" value="+975">Bhutan +975</option>
+                        <option data-country-code="BO" value="+591">Bolivia +591</option>
+                        <option data-country-code="BA" value="+387">Bosnia and Herzegovina +387</option>
+                        <option data-country-code="BW" value="+267">Botswana +267</option>
+                        <option data-country-code="BR" value="+55">Brazil +55</option>
+                        <option data-country-code="BN" value="+673">Brunei Darussalam +673</option>
+                        <option data-country-code="BG" value="+359">Bulgaria +359</option>
+                        <option data-country-code="BF" value="+226">Burkina Faso +226</option>
+                        <option data-country-code="BI" value="+257">Burundi +257</option>
+                        <option data-country-code="KH" value="+855">Cambodia +855</option>
+                        <option data-country-code="CM" value="+237">Cameroon +237</option>
+                        <option data-country-code="CA" value="+1">Canada +1</option>
+                        <option data-country-code="CV" value="+238">Cape Verde +238</option>
+                        <option data-country-code="KY" value="+1-345">Cayman Islands +1-345</option>
+                        <option data-country-code="CF" value="+236">Central African Republic +236</option>
+                        <option data-country-code="TD" value="+235">Chad +235</option>
+                        <option data-country-code="CL" value="+56">Chile +56</option>
+                        <option data-country-code="CN" value="+86">China +86</option>
+                        <option data-country-code="CO" value="+57">Colombia +57</option>
+                        <option data-country-code="KM" value="+269">Comoros +269</option>
+                        <option data-country-code="CG" value="+242">Congo (Brazzaville) +242</option>
+                        <option data-country-code="CD" value="+243">Congo (Kinshasa) +243</option>
+                        <option data-country-code="CK" value="+682">Cook Islands +682</option>
+                        <option data-country-code="CR" value="+506">Costa Rica +506</option>
+                        <option data-country-code="CI" value="+225">Côte d'Ivoire +225</option>
+                        <option data-country-code="HR" value="+385">Croatia +385</option>
+                        <option data-country-code="CU" value="+53">Cuba +53</option>
+                        <option data-country-code="CY" value="+357">Cyprus +357</option>
+                        <option data-country-code="CZ" value="+420">Czech Republic +420</option>
+                        <option data-country-code="DK" value="+45">Denmark +45</option>
+                        <option data-country-code="DJ" value="+253">Djibouti +253</option>
+                        <option data-country-code="DM" value="+1-767">Dominica +1-767</option>
+                        <option data-country-code="DO" value="+1-809">Dominican Republic +1-809</option>
+                        <option data-country-code="EC" value="+593">Ecuador +593</option>
+                        <option data-country-code="EG" value="+20">Egypt +20</option>
+                        <option data-country-code="SV" value="+503">El Salvador +503</option>
+                        <option data-country-code="GQ" value="+240">Equatorial Guinea +240</option>
+                        <option data-country-code="ER" value="+291">Eritrea +291</option>
+                        <option data-country-code="EE" value="+372">Estonia +372</option>
+                        <option data-country-code="ET" value="+251">Ethiopia +251</option>
+                        <option data-country-code="FK" value="+500">Falkland Islands +500</option>
+                        <option data-country-code="FO" value="+298">Faroe Islands +298</option>
+                        <option data-country-code="FJ" value="+679">Fiji +679</option>
+                        <option data-country-code="FI" value="+358">Finland +358</option>
+                        <option data-country-code="FR" value="+33">France +33</option>
+                        <option data-country-code="GF" value="+594">French Guiana +594</option>
+                        <option data-country-code="PF" value="+689">French Polynesia +689</option>
+                        <option data-country-code="GA" value="+241">Gabon +241</option>
+                        <option data-country-code="GM" value="+220">Gambia +220</option>
+                        <option data-country-code="GE" value="+995">Georgia +995</option>
+                        <option data-country-code="DE" value="+49">Germany +49</option>
+                        <option data-country-code="GH" value="+233">Ghana +233</option>
+                        <option data-country-code="GI" value="+350">Gibraltar +350</option>
+                        <option data-country-code="GR" value="+30">Greece +30</option>
+                        <option data-country-code="GL" value="+299">Greenland +299</option>
+                        <option data-country-code="GD" value="+1-473">Grenada +1-473</option>
+                        <option data-country-code="GP" value="+590">Guadeloupe +590</option>
+                        <option data-country-code="GU" value="+1-671">Guam +1-671</option>
+                        <option data-country-code="GT" value="+502">Guatemala +502</option>
+                        <option data-country-code="GG" value="+44-1481">Guernsey +44-1481</option>
+                        <option data-country-code="GN" value="+224">Guinea +224</option>
+                        <option data-country-code="GW" value="+245">Guinea-Bissau +245</option>
+                        <option data-country-code="GY" value="+592">Guyana +592</option>
+                        <option data-country-code="HT" value="+509">Haiti +509</option>
+                        <option data-country-code="HM" value="+672">Heard and McDonald Islands +672</option>
+                        <option data-country-code="HN" value="+504">Honduras +504</option>
+                        <option data-country-code="HK" value="+852">Hong Kong +852</option>
+                        <option data-country-code="HU" value="+36">Hungary +36</option>
+                        <option data-country-code="IS" value="+354">Iceland +354</option>
+                        <option data-country-code="IN" value="+91">India +91</option>
+                        <option data-country-code="ID" value="+62">Indonesia +62</option>
+                        <option data-country-code="IR" value="+98">Iran +98</option>
+                        <option data-country-code="IQ" value="+964">Iraq +964</option>
+                        <option data-country-code="IE" value="+353">Ireland +353</option>
+                        <option data-country-code="IM" value="+44-1624">Isle of Man +44-1624</option>
+                        <option data-country-code="IL" value="+972">Israel +972</option>
+                        <option data-country-code="IT" value="+39">Italy +39</option>
+                        <option data-country-code="JE" value="+44-1534">Jersey +44-1534</option>
+                        <option data-country-code="JM" value="+1-876">Jamaica +1-876</option>
+                        <option data-country-code="JP" value="+81">Japan +81</option>
+                        <option data-country-code="JO" value="+962">Jordan +962</option>
+                        <option data-country-code="KZ" value="+7">Kazakhstan +7</option>
+                        <option data-country-code="KE" value="+254">Kenya +254</option>
+                        <option data-country-code="KI" value="+686">Kiribati +686</option>
+                        <option data-country-code="KR" value="+82">Korea +82</option>
+                        <option data-country-code="KP" value="+850">Korea, North +850</option>
+                        <option data-country-code="KW" value="+965">Kuwait +965</option>
+                        <option data-country-code="KG" value="+996">Kyrgyzstan +996</option>
+                        <option data-country-code="LA" value="+856">Laos +856</option>
+                        <option data-country-code="LV" value="+371">Latvia +371</option>
+                        <option data-country-code="LB" value="+961">Lebanon +961</option>
+                        <option data-country-code="LS" value="+266">Lesotho +266</option>
+                        <option data-country-code="LR" value="+231">Liberia +231</option>
+                        <option data-country-code="LY" value="+218">Libya +218</option>
+                        <option data-country-code="LI" value="+423">Liechtenstein +423</option>
+                        <option data-country-code="LT" value="+370">Lithuania +370</option>
+                        <option data-country-code="LU" value="+352">Luxembourg +352</option>
+                        <option data-country-code="MO" value="+853">Macau +853</option>
+                        <option data-country-code="MK" value="+389">Macedonia +389</option>
+                        <option data-country-code="MG" value="+261">Madagascar +261</option>
+                        <option data-country-code="MW" value="+265">Malawi +265</option>
+                        <option data-country-code="MY" value="+60">Malaysia +60</option>
+                        <option data-country-code="MV" value="+960">Maldives +960</option>
+                        <option data-country-code="ML" value="+223">Mali +223</option>
+                        <option data-country-code="MT" value="+356">Malta +356</option>
+                        <option data-country-code="MH" value="+692">Marshall Islands +692</option>
+                        <option data-country-code="MQ" value="+596">Martinique +596</option>
+                        <option data-country-code="MR" value="+222">Mauritania +222</option>
+                        <option data-country-code="MU" value="+230">Mauritius +230</option>
+                        <option data-country-code="YT" value="+262">Mayotte +262</option>
+                        <option data-country-code="MX" value="+52">Mexico +52</option>
+                        <option data-country-code="FM" value="+691">Micronesia +691</option>
+                        <option data-country-code="MD" value="+373">Moldova +373</option>
+                        <option data-country-code="MC" value="+377">Monaco +377</option>
+                        <option data-country-code="MN" value="+976">Mongolia +976</option>
+                        <option data-country-code="ME" value="+382">Montenegro +382</option>
+                        <option data-country-code="MS" value="+1-664">Montserrat +1-664</option>
+                        <option data-country-code="MA" value="+212">Morocco +212</option>
+                        <option data-country-code="MZ" value="+258">Mozambique +258</option>
+                        <option data-country-code="MM" value="+95">Myanmar +95</option>
+                        <option data-country-code="NA" value="+264">Namibia +264</option>
+                        <option data-country-code="NR" value="+674">Nauru +674</option>
+                        <option data-country-code="NP" value="+977">Nepal +977</option>
+                        <option data-country-code="NL" value="+31">Netherlands +31</option>
+                        <option data-country-code="NC" value="+687">New Caledonia +687</option>
+                        <option data-country-code="NZ" value="+64">New Zealand +64</option>
+                        <option data-country-code="NI" value="+505">Nicaragua +505</option>
+                        <option data-country-code="NE" value="+227">Niger +227</option>
+                        <option data-country-code="NG" value="+234">Nigeria +234</option>
+                        <option data-country-code="NU" value="+683">Niue +683</option>
+                        <option data-country-code="NF" value="+672">Norfolk Island +672</option>
+                        <option data-country-code="MP" value="+1-670">Northern Mariana Islands +1-670</option>
+                        <option data-country-code="NO" value="+47">Norway +47</option>
+                        <option data-country-code="OM" value="+968">Oman +968</option>
+                        <option data-country-code="PK" value="+92">Pakistan +92</option>
+                        <option data-country-code="PW" value="+680">Palau +680</option>
+                        <option data-country-code="PS" value="+970">Palestine +970</option>
+                        <option data-country-code="PA" value="+507">Panama +507</option>
+                        <option data-country-code="PG" value="+675">Papua New Guinea +675</option>
+                        <option data-country-code="PY" value="+595">Paraguay +595</option>
+                        <option data-country-code="PE" value="+51">Peru +51</option>
+                        <option data-country-code="PH" value="+63">Philippines +63</option>
+                        <option data-country-code="PN" value="+870">Pitcairn Islands +870</option>
+                        <option data-country-code="PL" value="+48">Poland +48</option>
+                        <option data-country-code="PT" value="+351">Portugal +351</option>
+                        <option data-country-code="PR" value="+1-787">Puerto Rico +1-787</option>
+                        <option data-country-code="QA" value="+974">Qatar +974</option>
+                        <option data-country-code="RE" value="+262">Réunion +262</option>
+                        <option data-country-code="RO" value="+40">Romania +40</option>
+                        <option data-country-code="RU" value="+7">Russia +7</option>
+                        <option data-country-code="RW" value="+250">Rwanda +250</option>
+                        <option data-country-code="BL" value="+590">Saint Barthélemy +590</option>
+                        <option data-country-code="SH" value="+290">Saint Helena +290</option>
+                        <option data-country-code="KN" value="+1-869">Saint Kitts and Nevis +1-869</option>
+                        <option data-country-code="LC" value="+1-758">Saint Lucia +1-758</option>
+                        <option data-country-code="MF" value="+590">Saint Martin +590</option>
+                        <option data-country-code="SX" value="+1-721">Saint Martin (Dutch) +1-721</option>
+                        <option data-country-code="PM" value="+508">Saint Pierre and Miquelon +508</option>
+                        <option data-country-code="VC" value="+1-784">Saint Vincent and the Grenadines +1-784</option>
+                        <option data-country-code="WS" value="+685">Samoa +685</option>
+                        <option data-country-code="SM" value="+378">San Marino +378</option>
+                        <option data-country-code="ST" value="+239">Sao Tome and Principe +239</option>
+                        <option data-country-code="SA" value="+966">Saudi Arabia +966</option>
+                        <option data-country-code="SN" value="+221">Senegal +221</option>
+                        <option data-country-code="RS" value="+381">Serbia +381</option>
+                        <option data-country-code="SC" value="+248">Seychelles +248</option>
+                        <option data-country-code="SL" value="+232">Sierra Leone +232</option>
+                        <option data-country-code="SG" value="+65">Singapore +65</option>
+                        <option data-country-code="SX" value="+1-721">Sint Maarten +1-721</option>
+                        <option data-country-code="SK" value="+421">Slovakia +421</option>
+                        <option data-country-code="SI" value="+386">Slovenia +386</option>
+                        <option data-country-code="SB" value="+677">Solomon Islands +677</option>
+                        <option data-country-code="SO" value="+252">Somalia +252</option>
+                        <option data-country-code="ZA" value="+27">South Africa +27</option>
+                        <option data-country-code="GS" value="+500">South Georgia and the South Sandwich Islands +500</option>
+                        <option data-country-code="SS" value="+211">South Sudan +211</option>
+                        <option data-country-code="ES" value="+34">Spain +34</option>
+                        <option data-country-code="LK" value="+94">Sri Lanka +94</option>
+                        <option data-country-code="SD" value="+249">Sudan +249</option>
+                        <option data-country-code="SR" value="+597">Suriname +597</option>
+                        <option data-country-code="SJ" value="+47">Svalbard and Jan Mayen +47</option>
+                        <option data-country-code="SE" value="+46">Sweden +46</option>
+                        <option data-country-code="CH" value="+41">Switzerland +41</option>
+                        <option data-country-code="SY" value="+963">Syria +963</option>
+                        <option data-country-code="TW" value="+886">Taiwan +886</option>
+                        <option data-country-code="TJ" value="+992">Tajikistan +992</option>
+                        <option data-country-code="TZ" value="+255">Tanzania +255</option>
+                        <option data-country-code="TH" value="+66">Thailand +66</option>
+                        <option data-country-code="TL" value="+670">Timor-Leste +670</option>
+                        <option data-country-code="TG" value="+228">Togo +228</option>
+                        <option data-country-code="TK" value="+690">Tokelau +690</option>
+                        <option data-country-code="TO" value="+676">Tonga +676</option>
+                        <option data-country-code="TT" value="+1-868">Trinidad and Tobago +1-868</option>
+                        <option data-country-code="TN" value="+216">Tunisia +216</option>
+                        <option data-country-code="TR" value="+90">Turkey +90</option>
+                        <option data-country-code="TM" value="+993">Turkmenistan +993</option>
+                        <option data-country-code="TC" value="+1-649">Turks and Caicos Islands +1-649</option>
+                        <option data-country-code="TV" value="+688">Tuvalu +688</option>
+                        <option data-country-code="UG" value="+256">Uganda +256</option>
+                        <option data-country-code="UA" value="+380">Ukraine +380</option>
+                        <option data-country-code="AE" value="+971">United Arab Emirates +971</option>
+                        <option data-country-code="GB" value="+44">United Kingdom +44</option>
+                        <option data-country-code="US" value="+1">United States +1</option>
+                        <option data-country-code="UY" value="+598">Uruguay +598</option>
+                        <option data-country-code="UZ" value="+998">Uzbekistan +998</option>
+                        <option data-country-code="VU" value="+678">Vanuatu +678</option>
+                        <option data-country-code="VA" value="+379">Vatican City +379</option>
+                        <option data-country-code="VE" value="+58">Venezuela +58</option>
+                        <option data-country-code="VN" value="+84">Vietnam +84</option>
+                        <option data-country-code="WF" value="+681">Wallis and Futuna +681</option>
+                        <option data-country-code="EH" value="+212">Western Sahara +212</option>
+                        <option data-country-code="YE" value="+967">Yemen +967</option>
+                        <option data-country-code="ZM" value="+260">Zambia +260</option>
+                        <option data-country-code="ZW" value="+263">Zimbabwe +263</option>
+                    </select>
+        </select>
+         <input type="text" aria-label="Phone Number" name="phone_number" class="form-control phone-number-input" placeholder="Enter your phone number" required>
+        </div>
+
+        
+        
+        <!-- Email -->
+        <label for="id_email">Email (Optional)</label>
+        
+        <input class="form-control email_confirm" aria-required="false" id="form_input_2" name="Email" type="email" aria-placeholder="" placeholder="Enter your email address">
+
+        <!-- Branch -->
+        <label for="id_branch">Branch</label>
+        <select name="branch" id="id_branch">
+            <option value="" aria-placeholder="Please Select">Please Select</option>
+            <option value="Adayar">Adayar</option>
+            <option value="Alwarpet">Alwarpet</option>
+            <option value="Ambattur">Ambattur</option>
+            <option value="Anna Nagar">Anna Nagar</option>
+            <option value="Ashok Nagar">Ashok Nagar</option>
+            <option value="Avadi">Avadi</option>
+            <option value="Ayanavaram">Ayanavaram</option>
+            <option value="Bazullah Road">Bazullah Road</option>
+            <option value="Besant Nagar">Besant Nagar</option>
+            <option value="Chrompet">Chrompet</option>
+            <option value="Egmore">Egmore</option>
+            <option value="Kanchipuram">Kanchipuram</option>
+            <option value="Kanchi Gandhi Road">Kanchi Gandhi Road</option>
+            <option value="Karapakkam">Karapakkam</option>
+            <option value="Kathipara">Kathipara</option>
+            <option value="Kelambakkam">Kelambakkam</option>
+            <option value="Korattur">Korattur</option>
+            <option value="Luz New">Luz New</option>
+            <option value="Madipakkam">Madipakkam</option>
+            <option value="Medavakkam">Medavakkam</option>
+            <option value="Mogappair">Mogappair</option>
+            <option value="Mylapore">Mylapore</option>
+            <option value="Nanganallur">Nanganallur</option>
+            <option value="Nanganallur West">Nanganallur West</option>
+            <option value="Nungambakkam">Nungambakkam</option>
+            <option value="Perambur">Perambur</option>
+            <option value="Porur">Porur</option>
+            <option value="Pondicherry">Pondicherry</option>
+            <option value="Purasai Palace">Purasai Palace</option>
+            <option value="Saidapet">Saidapet</option>
+            <option value="Tambaram West">Tambaram West</option>
+            <option value="Thiruvallur">Thiruvallur</option>
+            <option value="Thiruvanmiyur">Thiruvanmiyur</option>
+            <option value="Thiruvannamalai">Thiruvannamalai</option>
+            <option value="Thuraipakkam">Thuraipakkam</option>
+            <option value="Triplicane">Triplicane</option>
+            <option value="Usman Road">Usman Road</option>
+            <option value="Vadapalani">Vadapalani</option>
+            <option value="Valasaravakkam">Valasaravakkam</option>
+            <option value="Velachery">Velachery</option>
+            <option value="Villivakkam">Villivakkam</option>
+            <option value="VN Road T.Nagar">VN Road T.Nagar</option>
+            <option value="Venus Colony">Venus Colony</option>
+            <option value="West Mambalam">West Mambalam</option>
+            <option value="Chennai Airport">Chennai Airport</option>
+        </select>
+        
+
+        <!-- Value for Money -->
+<fieldset class="rating-section" required>
+    <legend>Value for Money*</legend>
+    <div class="radio-group">
+        <div class="radio-inline">
+            <input type="radio" id="value_excellent" value="Excellent" name="value_for_money">
+            <label for="value_excellent">Excellent</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="value_satisfied" value="Satisfied" name="value_for_money">
+            <label for="value_satisfied">Satisfied</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="value_improve" value="To be improved" name="value_for_money">
+            <label for="value_improve">To be Improved</label>
+        </div>
+    </div>
+</fieldset>
+
+<!-- Packaging -->
+<fieldset class="rating-section" required>
+    <legend>Packaging*</legend>
+    <div class="radio-group">
+        <div class="radio-inline">
+            <input type="radio" id="packaging_excellent" value="Excellent" name="packaging">
+            <label for="packaging_excellent">Excellent</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="packaging_satisfied" value="Satisfied" name="packaging">
+            <label for="packaging_satisfied">Satisfied</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="packaging_improve" value="To be improved" name="packaging">
+            <label for="packaging_improve">To be Improved</label>
+        </div>
+    </div>
+</fieldset>
+
+<!-- Quality -->
+<fieldset class="rating-section" required>
+    <legend>Quality*</legend>
+    <div class="radio-group">
+        <div class="radio-inline">
+            <input type="radio" id="quality_excellent" value="Excellent" name="quality">
+            <label for="quality_excellent">Excellent</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="quality_satisfied" value="Satisfied" name="quality">
+            <label for="quality_satisfied">Satisfied</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="quality_improve" value="To be improved" name="quality">
+            <label for="quality_improve">To be Improved</label>
+        </div>
+    </div>
+</fieldset>
+
+<!-- Display -->
+<fieldset class="rating-section" required>
+    <legend>Display*</legend>
+    <div class="radio-group">
+        <div class="radio-inline">
+            <input type="radio" id="display_excellent" value="Excellent" name="display">
+            <label for="display_excellent">Excellent</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="display_satisfied" value="Satisfied" name="display">
+            <label for="display_satisfied">Satisfied</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="display_improve" value="To be improved" name="display">
+            <label for="display_improve">To be Improved</label>
+        </div>
+    </div>
+</fieldset>
+
+<!-- Variety -->
+<fieldset class="rating-section" required>
+    <legend>Variety*</legend>
+    <div class="radio-group">
+        <div class="radio-inline">
+            <input type="radio" id="variety_excellent" value="Excellent" name="variety">
+            <label for="variety_excellent">Excellent</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="variety_satisfied" value="Satisfied" name="variety">
+            <label for="variety_satisfied">Satisfied</label>
+        </div>
+        <div class="radio-inline">
+            <input type="radio" id="variety_improve" value="To be improved" name="variety">
+            <label for="variety_improve">To be Improved</label>
+        </div>
+    </div>
+</fieldset>
+
+
+        <label for="id_comments">Any other comments</label>
+        <input class="form-control" aria-required="false" name="Any other comments" id="form_input_10" type="text" aria-placeholder="" placeholder="Enter your comments here"></textarea>
+        
+
+        <!-- Employee Name & ID -->
+        <label for="id_employee">Employee Name & ID</label>
+        <input type="text" name="employee" id="id_employee" required>
+
+        <div class="date-fields">
+            <div>
+                <label for="id_dob">Date of Birth</label>
+                <input type="date" name="dob" id="id_dob">
+            </div>
+            <div>
+                <label for="id_anniversary">Anniversary</label>
+                <input type="date" name="anniversary" id="id_anniversary">
+            </div>
+        </div>
+
+        
+ 
+    <!-- Audio Recording -->
+        <button type="button" id="record-toggle">Start Recording</button>
+        <button type="button" id="delete-audio">Delete Audio</button>
+        <audio id="audio-playback" controls></audio>
+        <input type="hidden" name="voice_message_base64" id="audio-data">
+
+        <div class="form-buttons">
+            <!-- Submit Button -->
+            <button type="submit" id="submit">Submit Feedback</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const recordToggleButton = document.getElementById('record-toggle');
+        const deleteAudioButton = document.getElementById('delete-audio');
+        const audioPlayback = document.getElementById('audio-playback');
+        const audioDataInput = document.getElementById('audio-data');
+        const playVoiceButton = document.getElementById('play-voice');
+        const descriptionText = document.getElementById('description').textContent;
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let isSpeaking = false;
+        let utterance;
+
+        // Check if the browser supports MediaRecorder API
+        if (!navigator.mediaDevices || !window.MediaRecorder) {
+            alert('Your browser does not support audio recording.');
+            return;
+        }
+
+        // Audio Recording Functionality
+        recordToggleButton.addEventListener('click', async function () {
+            if (isRecording) {
+                mediaRecorder.stop();
+                recordToggleButton.textContent = 'Start Recording';
+                deleteAudioButton.style.display = 'block'; // Show delete button
+                isRecording = false;
+            } else {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = function (event) {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = function () {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        audioPlayback.src = audioUrl;
+                        audioPlayback.style.display = 'block';
+
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = function () {
+                            audioDataInput.value = reader.result.split(',')[1]; // Base64 data
+                        };
+                    };
+
+                    recordToggleButton.textContent = 'Stop Recording';
+                    deleteAudioButton.style.display = 'none'; // Hide delete button while recording
+                    isRecording = true;
+                } catch (error) {
+                    console.error('Error accessing microphone:', error);
+                }
+            }
+        });
+
+        // Delete Audio Functionality
+        deleteAudioButton.addEventListener('click', function () {
+            audioPlayback.src = '';
+            audioPlayback.style.display = 'none';
+            audioDataInput.value = '';
+            deleteAudioButton.style.display = 'none';
+            recordToggleButton.textContent = 'Start Recording';
+
+            // Allow starting a new recording immediately after deleting
+            if (!isRecording) {
+                recordToggleButton.disabled = false;
+            }
+        });
+
+        // Play Voice Functionality
+        playVoiceButton.addEventListener('click', function () {
+            if (!isSpeaking) {
+                utterance = new SpeechSynthesisUtterance(descriptionText);
+
+                const voices = window.speechSynthesis.getVoices();
+                utterance.voice = voices.find(voice => voice.lang === 'en-US') || voices[0];
+                utterance.pitch = 1;
+                utterance.rate = 1;
+
+                utterance.onstart = function () {
+                    isSpeaking = true;
+                    playVoiceButton.innerText = "Mute";
+                };
+
+                utterance.onend = function () {
+                    isSpeaking = false;
+                    playVoiceButton.innerText = "Hear Description";
+                };
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                playVoiceButton.innerText = "Hear Description";
+            }
+        });
+
+        // Optional: Reset button if speech is manually stopped outside this button
+        window.speechSynthesis.onvoiceschanged = function() {
+            if (!window.speechSynthesis.speaking) {
+                isSpeaking = false;
+                playVoiceButton.innerText = "Hear Description";
+            }
+        };
+    });
+</script>
+
+</body>
+</html>

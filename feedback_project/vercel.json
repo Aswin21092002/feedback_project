@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "feedback_project/manage.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/feedback_project/static/$1"
+    },
+    {
+      "src": "/media/(.*)",
+      "dest": "/feedback_project/media/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/feedback_project/manage.py"
+    }
+  ]
+}
